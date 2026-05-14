@@ -1,1133 +1,1575 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Tappal Management System</title>
-<style>
-  :root {
-    --primary: #1a5276;
-    --primary-light: #2980b9;
-    --accent: #e67e22;
-    --success: #27ae60;
-    --danger: #c0392b;
-    --warning: #f39c12;
-    --bg: #f0f2f5;
-    --card: #ffffff;
-    --text: #2c3e50;
-    --text-light: #7f8c8d;
-    --border: #dce1e8;
-    --shadow: 0 2px 8px rgba(0,0,0,0.08);
-  }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tappal Management System</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js">
+    </script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js">
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        :root {
+            --primary: #1a3c5e;
+            --primary-light: #2c5f8a;
+            --accent: #e8913a;
+            --accent-light: #f5a623;
+            --danger: #c0392b;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #2c3e50;
+            --text-light: #5a6c7d;
+            --border: #dce3ea;
+            --shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+            --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+            --radius: 12px;
+            --radius-sm: 8px;
+            --transition: 0.2s ease;
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        #root {
+            min-height: 100vh;
+        }
 
-  .header { background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: #fff; padding: 16px 24px; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 12px rgba(0,0,0,0.15); position: sticky; top: 0; z-index: 100; }
-  .header h1 { font-size: 1.3rem; font-weight: 700; }
-  .header h1 span { color: var(--accent); }
-  .header-right { display: flex; align-items: center; gap: 12px; }
-  .user-badge { background: rgba(255,255,255,0.15); padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; }
-  .logout-btn { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 6px 14px; border-radius: 8px; cursor: pointer; font-size: 0.8rem; transition: 0.2s; }
-  .logout-btn:hover { background: rgba(255,255,255,0.3); }
+        /* Login */
+        .login-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #1a3c5e 0%, #2c5f8a 40%, #1a3c5e 100%);
+            padding: 20px;
+        }
+        .login-card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 40px 32px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: var(--shadow-lg);
+            text-align: center;
+        }
+        .login-card .logo {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        .login-card h1 {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .login-card .subtitle {
+            color: var(--text-light);
+            font-size: 0.9rem;
+            margin-bottom: 24px;
+        }
+        .login-card input,
+        .login-card select {
+            width: 100%;
+            padding: 12px 16px;
+            margin: 8px 0;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 1rem;
+            transition: var(--transition);
+            background: #fafbfc;
+        }
+        .login-card input:focus,
+        .login-card select:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.1);
+            background: #fff;
+        }
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: var(--radius-sm);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: #fff;
+            width: 100%;
+            justify-content: center;
+            margin-top: 8px;
+        }
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(26, 60, 94, 0.3);
+        }
+        .btn-accent {
+            background: var(--accent);
+            color: #fff;
+        }
+        .btn-accent:hover {
+            background: var(--accent-light);
+        }
+        .btn-success {
+            background: var(--success);
+            color: #fff;
+        }
+        .btn-success:hover {
+            background: #219a52;
+        }
+        .btn-danger {
+            background: var(--danger);
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #a93226;
+        }
+        .btn-outline {
+            background: #fff;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        .btn-outline:hover {
+            background: #eef4f9;
+        }
+        .btn-sm {
+            padding: 6px 14px;
+            font-size: 0.8rem;
+            border-radius: 6px;
+        }
+        .btn-xs {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+            border-radius: 4px;
+        }
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none !important;
+        }
 
-  .login-container { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, var(--primary), var(--primary-light)); }
-  .login-box { background: #fff; padding: 40px; border-radius: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.2); width: 380px; max-width: 90vw; }
-  .login-box h2 { text-align: center; margin-bottom: 8px; color: var(--primary); }
-  .login-box p { text-align: center; color: var(--text-light); margin-bottom: 24px; font-size: 0.9rem; }
-  .login-box select, .login-box input { width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 10px; font-size: 0.95rem; margin-bottom: 12px; }
-  .login-box select:focus, .login-box input:focus { outline: none; border-color: var(--primary-light); }
-  .login-box .btn { width: 100%; padding: 12px; font-size: 1rem; margin-top: 8px; }
+        /* Layout */
+        .app-layout {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .topbar {
+            background: var(--primary);
+            color: #fff;
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .topbar .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .topbar .role-badge {
+            background: var(--accent);
+            color: #fff;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        .topbar .role-badge.admin-badge {
+            background: #e74c3c;
+        }
+        .topbar h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            max-width: 1300px;
+            width: 100%;
+            margin: 0 auto;
+        }
 
-  .app-container { display: flex; min-height: calc(100vh - 56px); }
-  .sidebar { width: 220px; background: #fff; border-right: 1px solid var(--border); padding: 16px 0; flex-shrink: 0; }
-  .sidebar-item { padding: 10px 20px; cursor: pointer; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; color: var(--text-light); transition: 0.15s; border-left: 3px solid transparent; }
-  .sidebar-item:hover { background: #f7f9fc; color: var(--text); }
-  .sidebar-item.active { background: #eaf2f8; color: var(--primary); border-left-color: var(--primary); font-weight: 600; }
-  .sidebar-item .badge { background: var(--danger); color: #fff; font-size: 0.7rem; padding: 2px 7px; border-radius: 10px; margin-left: auto; }
-  .main { flex: 1; padding: 24px; overflow-y: auto; }
+        /* Cards */
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .card-header h3 {
+            font-size: 1.1rem;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .stat-card {
+            background: var(--card);
+            border-radius: var(--radius-sm);
+            padding: 16px;
+            text-align: center;
+            border: 2px solid var(--border);
+            transition: var(--transition);
+        }
+        .stat-card:hover {
+            border-color: var(--primary-light);
+            box-shadow: var(--shadow);
+        }
+        .stat-card .stat-num {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .stat-card .stat-label {
+            font-size: 0.8rem;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .stat-card.warning .stat-num {
+            color: var(--warning);
+        }
+        .stat-card.danger .stat-num {
+            color: var(--danger);
+        }
+        .stat-card.success .stat-num {
+            color: var(--success);
+        }
 
-  .card { background: var(--card); border-radius: 12px; box-shadow: var(--shadow); padding: 20px; margin-bottom: 16px; }
-  .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-  .card-header h3 { font-size: 1.05rem; }
+        /* Table */
+        .table-wrapper {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        table th,
+        table td {
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+        table th {
+            background: #f7f9fb;
+            color: var(--text-light);
+            font-weight: 600;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+        }
+        table tr:hover {
+            background: #fafcfd;
+        }
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-pending {
+            background: #fef3cd;
+            color: #856404;
+        }
+        .badge-completed {
+            background: #d4edda;
+            color: #155724;
+        }
+        .badge-urgent {
+            background: #f8d7da;
+            color: #721c24;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        .time-elapsed {
+            font-weight: 600;
+            color: var(--danger);
+        }
+        .time-normal {
+            color: var(--text-light);
+        }
 
-  .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin-bottom: 20px; }
-  .stat-card { background: var(--card); border-radius: 12px; padding: 16px; box-shadow: var(--shadow); text-align: center; }
-  .stat-card .number { font-size: 2rem; font-weight: 700; }
-  .stat-card .label { font-size: 0.8rem; color: var(--text-light); margin-top: 4px; }
-  .stat-card.orange .number { color: var(--accent); }
-  .stat-card.green .number { color: var(--success); }
-  .stat-card.red .number { color: var(--danger); }
-  .stat-card.blue .number { color: var(--primary-light); }
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+        .modal {
+            background: #fff;
+            border-radius: var(--radius);
+            padding: 28px 24px;
+            width: 100%;
+            max-width: 600px;
+            max-height: 85vh;
+            overflow-y: auto;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.25s ease;
+        }
+        @keyframes slideUp {
+            from {
+                transform: translateY(30px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal h3 {
+            margin-bottom: 16px;
+            color: var(--primary);
+        }
+        .modal input,
+        .modal select,
+        .modal textarea {
+            width: 100%;
+            padding: 10px 14px;
+            margin: 6px 0 12px;
+            border: 2px solid var(--border);
+            border-radius: var(--radius-sm);
+            font-size: 0.9rem;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+        .modal input:focus,
+        .modal select:focus,
+        .modal textarea:focus {
+            outline: none;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 3px rgba(44, 95, 138, 0.08);
+        }
+        .modal textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
 
-  .table-wrap { overflow-x: auto; }
-  table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
-  th { background: #f7f9fc; padding: 10px 12px; text-align: left; font-weight: 600; color: var(--text-light); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid var(--border); }
-  td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
-  tr:hover { background: #fafbfc; }
+        /* Image preview */
+        .image-preview {
+            max-width: 200px;
+            max-height: 150px;
+            border-radius: var(--radius-sm);
+            border: 2px dashed var(--border);
+            object-fit: contain;
+            margin: 8px 0;
+            display: block;
+        }
+        .completion-msg {
+            background: #eafaf1;
+            border-left: 4px solid var(--success);
+            padding: 10px 14px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 8px 0;
+            font-size: 0.85rem;
+            color: #155724;
+        }
+        .transfer-note {
+            background: #fef9e7;
+            border-left: 4px solid var(--warning);
+            padding: 10px 14px;
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+            margin: 8px 0;
+            font-size: 0.85rem;
+        }
 
-  .status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.78rem; font-weight: 600; }
-  .status-pending { background: #fdebd0; color: #e67e22; }
-  .status-inprogress { background: #d4efdf; color: #27ae60; }
-  .status-completed { background: #d5f5e3; color: #1e8449; }
-  .status-transferred { background: #ebf5fb; color: #2980b9; }
-  .priority-high { color: var(--danger); font-weight: 600; }
-  .priority-medium { color: var(--warning); }
-  .priority-low { color: var(--success); }
-  .time-elapsed { font-size: 0.82rem; color: var(--text-light); }
-  .time-elapsed.urgent { color: var(--danger); font-weight: 600; }
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0;
+        }
+        .tab {
+            padding: 10px 18px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-light);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: var(--transition);
+            border-radius: 6px 6px 0 0;
+        }
+        .tab:hover {
+            color: var(--primary);
+            background: #f5f8fb;
+        }
+        .tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--accent);
+            background: #fafcfd;
+        }
 
-  .btn { padding: 8px 18px; border: none; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 600; transition: 0.2s; display: inline-flex; align-items: center; gap: 6px; }
-  .btn-primary { background: var(--primary); color: #fff; }
-  .btn-primary:hover { background: var(--primary-light); }
-  .btn-success { background: var(--success); color: #fff; }
-  .btn-success:hover { background: #2ecc71; }
-  .btn-danger { background: var(--danger); color: #fff; }
-  .btn-danger:hover { background: #e74c3c; }
-  .btn-warning { background: var(--warning); color: #fff; }
-  .btn-sm { padding: 5px 12px; font-size: 0.78rem; }
-  .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--text); }
-  .btn-outline:hover { border-color: var(--primary); color: var(--primary); }
-
-  .form-group { margin-bottom: 14px; }
-  .form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 5px; color: var(--text); }
-  .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px 12px; border: 2px solid var(--border); border-radius: 8px; font-size: 0.9rem; transition: 0.2s; font-family: inherit; }
-  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: var(--primary-light); }
-  .form-group textarea { resize: vertical; min-height: 80px; }
-  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-
-  .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.4); z-index: 200; align-items: center; justify-content: center; backdrop-filter: blur(2px); }
-  .modal-overlay.show { display: flex; }
-  .modal { background: #fff; border-radius: 16px; padding: 24px; width: 540px; max-width: 92vw; max-height: 85vh; overflow-y: auto; box-shadow: 0 12px 40px rgba(0,0,0,0.2); }
-  .modal h2 { margin-bottom: 16px; font-size: 1.15rem; }
-  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 16px; }
-
-  .detail-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
-  .detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
-  .detail-meta .item { background: #f7f9fc; padding: 10px 14px; border-radius: 8px; }
-  .detail-meta .item .lbl { font-size: 0.75rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
-  .detail-meta .item .val { font-size: 0.95rem; font-weight: 600; margin-top: 2px; }
-  .timeline { margin-top: 16px; }
-  .timeline-item { display: flex; gap: 12px; padding: 8px 0; position: relative; }
-  .timeline-item::before { content: ''; position: absolute; left: 11px; top: 30px; bottom: -8px; width: 2px; background: var(--border); }
-  .timeline-item:last-child::before { display: none; }
-  .timeline-dot { width: 24px; height: 24px; border-radius: 50%; background: var(--primary-light); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .timeline-dot svg { width: 12px; height: 12px; fill: #fff; }
-  .timeline-content { flex: 1; }
-  .timeline-content .tl-title { font-size: 0.88rem; font-weight: 600; }
-  .timeline-content .tl-desc { font-size: 0.82rem; color: var(--text-light); margin-top: 2px; }
-  .timeline-content .tl-time { font-size: 0.75rem; color: #aaa; margin-top: 2px; }
-
-  .completion-box { background: #d5f5e3; border: 1px solid #a9dfbf; border-radius: 10px; padding: 14px; margin-top: 12px; }
-  .completion-box h4 { color: #1e8449; margin-bottom: 6px; font-size: 0.9rem; }
-  .completion-box p { font-size: 0.88rem; color: #1e8449; }
-
-  .user-list { display: flex; flex-direction: column; gap: 8px; }
-  .user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 14px; background: #f7f9fc; border-radius: 8px; }
-  .user-row .user-info { display: flex; align-items: center; gap: 10px; }
-  .user-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary-light); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.85rem; }
-  .user-name { font-weight: 600; font-size: 0.9rem; }
-  .user-role { font-size: 0.78rem; color: var(--text-light); }
-
-  .toast { position: fixed; top: 70px; right: 20px; background: var(--success); color: #fff; padding: 12px 20px; border-radius: 10px; font-size: 0.9rem; z-index: 300; box-shadow: 0 4px 16px rgba(0,0,0,0.15); transform: translateX(120%); transition: 0.3s; }
-  .toast.show { transform: translateX(0); }
-  .toast.error { background: var(--danger); }
-
-  /* Image upload area */
-  .upload-area { border: 2px dashed var(--border); border-radius: 10px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; margin-bottom: 14px; position: relative; }
-  .upload-area:hover { border-color: var(--primary-light); background: #f7f9fc; }
-  .upload-area.has-file { border-color: var(--success); background: #eafaf1; }
-  .upload-area input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-  .upload-area .upload-icon { font-size: 2rem; margin-bottom: 6px; }
-  .upload-area .upload-text { font-size: 0.85rem; color: var(--text-light); }
-  .upload-area .file-name { font-size: 0.85rem; color: var(--success); font-weight: 600; margin-top: 4px; }
-  .upload-preview { max-width: 100%; max-height: 200px; border-radius: 8px; margin-top: 8px; }
-
-  /* Attachment display */
-  .attachment-box { margin-top: 12px; }
-  .attachment-box img { max-width: 100%; max-height: 300px; border-radius: 8px; border: 1px solid var(--border); cursor: pointer; }
-  .attachment-box img:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); }
-
-  /* Image lightbox */
-  .lightbox { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 400; align-items: center; justify-content: center; cursor: pointer; }
-  .lightbox.show { display: flex; }
-  .lightbox img { max-width: 90vw; max-height: 90vh; border-radius: 8px; }
-
-  @media (max-width: 768px) {
-    .sidebar { display: none; }
-    .sidebar.mobile-show { display: block; position: fixed; top: 56px; left: 0; bottom: 0; z-index: 150; width: 240px; box-shadow: 4px 0 16px rgba(0,0,0,0.1); }
-    .form-row { grid-template-columns: 1fr; }
-    .detail-meta { grid-template-columns: 1fr; }
-    .stats-grid { grid-template-columns: 1fr 1fr; }
-  }
-</style>
+        /* Responsive */
+        @media (max-width: 768px) {
+            .topbar {
+                padding: 10px 14px;
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .topbar h2 {
+                font-size: 1rem;
+            }
+            .main-content {
+                padding: 12px;
+            }
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            .stat-card {
+                padding: 12px 8px;
+            }
+            .stat-card .stat-num {
+                font-size: 1.4rem;
+            }
+            table th,
+            table td {
+                padding: 6px 8px;
+                font-size: 0.78rem;
+            }
+            .modal {
+                padding: 18px 14px;
+                max-width: 95vw;
+            }
+            .btn {
+                padding: 10px 16px;
+                font-size: 0.85rem;
+            }
+            .card {
+                padding: 14px;
+            }
+        }
+        @media (max-width: 400px) {
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 6px;
+            }
+            .tab {
+                padding: 8px 10px;
+                font-size: 0.75rem;
+            }
+        }
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: var(--text-light);
+        }
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+        .highlight-row {
+            animation: highlightAnim 2s ease;
+        }
+        @keyframes highlightAnim {
+            0% {
+                background: #fffde7;
+            }
+            100% {
+                background: transparent;
+            }
+        }
+    </style>
 </head>
 <body>
+    <div id="root"></div>
 
-<div id="toast" class="toast"></div>
+    <script type="text/babel">
+        const { useState, useEffect, useCallback, useRef, createContext, useContext } = React;
 
-<!-- Lightbox -->
-<div id="lightbox" class="lightbox" onclick="this.classList.remove('show')">
-  <img id="lightboxImg" src="">
+        // ==================== DATA LAYER ====================
+        const STORAGE_KEY = 'tappal_app_data';
+
+        const defaultUsers = [
+            { id: 'u1', username: 'dispatch', password: 'dispatch123', name: 'Dispatch Officer', role: 'dispatch',
+                department: null, parentId: null },
+            { id: 'u2', username: 'director', password: 'director123', name: 'Director', role: 'director',
+                department: null, parentId: null },
+            { id: 'u3', username: 'dy_dir_rd', password: 'password123', name: 'Dy. Dir. (Research & Development)',
+                role: 'dy_dir', department: 'rd', parentId: 'u2' },
+            { id: 'u4', username: 'dy_dir_ee', password: 'password123', name: 'Dy. Dir. (Environment & Education)',
+                role: 'dy_dir', department: 'ee', parentId: 'u2' },
+            { id: 'u5', username: 'rd_admin', password: 'password123', name: 'Admin (R&D)', role: 'sub_user',
+                department: 'rd', subRole: 'admin', parentId: 'u3' },
+            { id: 'u6', username: 'rd_plan', password: 'password123', name: 'Plan (R&D)', role: 'sub_user',
+                department: 'rd', subRole: 'plan', parentId: 'u3' },
+            { id: 'u7', username: 'rd_account', password: 'password123', name: 'Account (R&D)', role: 'sub_user',
+                department: 'rd', subRole: 'account', parentId: 'u3' },
+            { id: 'u8', username: 'rd_research', password: 'password123', name: 'Research (R&D)', role: 'sub_user',
+                department: 'rd', subRole: 'research', parentId: 'u3' },
+            { id: 'u9', username: 'rd_lab', password: 'password123', name: 'Laboratory (R&D)', role: 'sub_user',
+                department: 'rd', subRole: 'laboratory', parentId: 'u3' },
+            { id: 'u10', username: 'ee_admin', password: 'password123', name: 'Admin (E&E)', role: 'sub_user',
+                department: 'ee', subRole: 'admin', parentId: 'u4' },
+            { id: 'u11', username: 'ee_plan', password: 'password123', name: 'Plan (E&E)', role: 'sub_user',
+                department: 'ee', subRole: 'plan', parentId: 'u4' },
+            { id: 'u12', username: 'ee_account', password: 'password123', name: 'Account (E&E)', role: 'sub_user',
+                department: 'ee', subRole: 'account', parentId: 'u4' },
+            { id: 'u13', username: 'ee_ee', password: 'password123', name: 'E&E Officer (E&E)', role: 'sub_user',
+                department: 'ee', subRole: 'ee', parentId: 'u4' },
+        ];
+
+        function loadData() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) {
+                try {
+                    const data = JSON.parse(raw);
+                    return {
+                        users: data.users || defaultUsers,
+                        tappals: data.tappals || [],
+                        nextTappalNum: data.nextTappalNum || 1,
+                    };
+                } catch (e) { /* fall through */ }
+            }
+            return { users: defaultUsers, tappals: [], nextTappalNum: 1 };
+        }
+
+        function saveData(data) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+        }
+
+        // ==================== CONTEXT ====================
+        const AppContext = createContext(null);
+
+        function useApp() {
+            return useContext(AppContext);
+        }
+
+        // ==================== UTILS ====================
+        function formatTimeAgo(timestamp) {
+            const now = Date.now();
+            const diff = now - timestamp;
+            const mins = Math.floor(diff / 60000);
+            const hrs = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            if (mins < 1) return 'Just now';
+            if (mins < 60) return `${mins} min ago`;
+            if (hrs < 24) return `${hrs} hr${hrs>1?'s':''} ago`;
+            return `${days} day${days>1?'s':''} ago`;
+        }
+
+        function formatDuration(timestamp) {
+            const diff = Date.now() - timestamp;
+            const mins = Math.floor(diff / 60000);
+            const hrs = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+            if (days > 0) return `${days}d ${hrs%24}h`;
+            if (hrs > 0) return `${hrs}h ${mins%60}m`;
+            return `${mins}m`;
+        }
+
+        function getDurationClass(timestamp) {
+            const diff = Date.now() - timestamp;
+            const days = diff / 86400000;
+            if (days > 7) return 'time-elapsed';
+            if (days > 3) return 'time-normal';
+            return '';
+        }
+
+        function generateId() {
+            return 'tpl_' + Date.now() + '_' + Math.random().toString(36).substr(2, 6);
+        }
+
+        function generateUserId() {
+            return 'u' + Date.now() + '_' + Math.random().toString(36).substr(2, 4);
+        }
+
+        // ==================== COMPONENTS ====================
+
+        // --- Login Screen ---
+        function LoginScreen() {
+            const { login } = useApp();
+            const [username, setUsername] = useState('');
+            const [password, setPassword] = useState('');
+            const [error, setError] = useState('');
+            const [showHint, setShowHint] = useState(false);
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                setError('');
+                const result = login(username.trim(), password);
+                if (!result.success) {
+                    setError(result.message);
+                }
+            };
+
+            return (
+                <div className="login-container">
+                    <form className="login-card" onSubmit={handleLogin}>
+                        <div className="logo">📬</div>
+                        <h1>Tappal Management</h1>
+                        <p className="subtitle">Government Correspondence Tracking System</p>
+                        {error && <p style={{color:'#c0392b',marginBottom:8,fontWeight:600}}>{error}</p>}
+                        <input
+                            type="text"
+                            placeholder="Username"
+                            value={username}
+                            onChange={e=>setUsername(e.target.value)}
+                            autoFocus
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={e=>setPassword(e.target.value)}
+                        />
+                        <button type="submit" className="btn btn-primary">🔐 Sign In</button>
+                        <button
+                            type="button"
+                            className="btn btn-outline"
+                            style={{marginTop:8,width:'100%',justifyContent:'center'}}
+                            onClick={()=>setShowHint(!showHint)}
+                        >
+                            {showHint ? 'Hide' : 'Show'} Demo Credentials
+                        </button>
+                        {showHint && (
+                            <div style={{textAlign:'left',marginTop:12,fontSize:'0.8rem',background:'#f7f9fb',padding:12,borderRadius:8}}>
+                                <p><strong>Director:</strong> director / director123</p>
+                                <p><strong>Dispatch:</strong> dispatch / dispatch123</p>
+                                <p><strong>Dy.Dir (R&D):</strong> dy_dir_rd / password123</p>
+                                <p><strong>Dy.Dir (E&E):</strong> dy_dir_ee / password123</p>
+                                <p><strong>Sub-users:</strong> rd_admin, rd_plan, rd_account, rd_research, rd_lab, ee_admin, ee_plan, ee_account, ee_ee / password123</p>
+                            </div>
+                        )}
+                    </form>
+                </div>
+            );
+        }
+
+        // --- Dispatch Dashboard ---
+        function DispatchDashboard() {
+            const { data, currentUser, createTappal, assignTappal, refreshData } = useApp();
+            const [showCreate, setShowCreate] = useState(false);
+            const [newTappal, setNewTappal] = useState({
+                subject: '',
+                description: '',
+                priority: 'normal',
+                assignedTo: '',
+                note: '',
+                image: null,
+            });
+            const [imagePreview, setImagePreview] = useState(null);
+            const fileInputRef = useRef(null);
+
+            const myTappals = data.tappals.filter(t =>
+                t.assignmentHistory.some(h => h.from === currentUser.id) ||
+                t.createdBy === currentUser.id
+            );
+
+            const handleImageUpload = (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    if (file.size > 2 * 1024 * 1024) {
+                        alert('Image size should be under 2MB for localStorage. Resizing...');
+                    }
+                    const reader = new FileReader();
+                    reader.onload = (ev) => {
+                        // Compress large images
+                        const img = new Image();
+                        img.onload = () => {
+                            const canvas = document.createElement('canvas');
+                            let w = img.width,
+                                h = img.height;
+                            const maxDim = 400;
+                            if (w > maxDim || h > maxDim) {
+                                const ratio = Math.min(maxDim / w, maxDim / h);
+                                w = Math.round(w * ratio);
+                                h = Math.round(h * ratio);
+                            }
+                            canvas.width = w;
+                            canvas.height = h;
+                            const ctx = canvas.getContext('2d');
+                            ctx.drawImage(img, 0, 0, w, h);
+                            const compressed = canvas.toDataURL('image/jpeg', 0.7);
+                            setImagePreview(compressed);
+                            setNewTappal(prev => ({ ...prev, image: compressed }));
+                        };
+                        img.src = ev.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            };
+
+            const handleCreate = () => {
+                if (!newTappal.subject.trim()) {
+                    alert('Please enter a subject.');
+                    return;
+                }
+                if (!newTappal.assignedTo) {
+                    alert('Please select who to assign the tappal to.');
+                    return;
+                }
+                createTappal({
+                    subject: newTappal.subject.trim(),
+                    description: newTappal.description.trim(),
+                    priority: newTappal.priority,
+                    assignedTo: newTappal.assignedTo,
+                    note: newTappal.note.trim(),
+                    image: newTappal.image,
+                });
+                setNewTappal({ subject: '', description: '', priority: 'normal', assignedTo: '', note: '', image: null });
+                setImagePreview(null);
+                setShowCreate(false);
+            };
+
+            const getAssignableUsers = () => {
+                return data.users.filter(u =>
+                    u.role === 'director' || u.role === 'dy_dir'
+                );
+            };
+
+            return (
+                <div>
+                    <div className="card">
+                        <div className="card-header">
+                            <h3>📨 Dispatch Dashboard</h3>
+                            <button className="btn btn-accent" onClick={() => setShowCreate(true)}>
+                                ➕ New Tappal
+                            </button>
+                        </div>
+                        <div className="stats-grid">
+                            <div className="stat-card">
+                                <div className="stat-num">{myTappals.length}</div>
+                                <div className="stat-label">Total Dispatched</div>
+                            </div>
+                            <div className="stat-card warning">
+                                <div className="stat-num">{myTappals.filter(t=>t.status==='pending').length}</div>
+                                <div className="stat-label">Pending</div>
+                            </div>
+                            <div className="stat-card success">
+                                <div className="stat-num">{myTappals.filter(t=>t.status==='completed').length}</div>
+                                <div className="stat-label">Completed</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {showCreate && (
+                        <div className="modal-overlay" onClick={e => { if (e.target === e.currentTarget) setShowCreate(
+                                false); }}>
+                            <div className="modal">
+                                <h3>📝 Create New Tappal</h3>
+                                <label>Subject *</label>
+                                <input
+                                    type="text"
+                                    value={newTappal.subject}
+                                    onChange={e=>setNewTappal(prev=>({...prev,subject:e.target.value}))}
+                                    placeholder="Enter tappal subject"
+                                />
+                                <label>Description</label>
+                                <textarea
+                                    value={newTappal.description}
+                                    onChange={e=>setNewTappal(prev=>({...prev,description:e.target.value}))}
+                                    placeholder="Enter details..."
+                                />
+                                <label>Priority</label>
+                                <select value={newTappal.priority}
+                            onChange={e=>setNewTappal(prev=>({...prev,priority:e.target.value}))}>
+                                <option value="normal">Normal</option>
+                                <option value="high">High</option>
+                                <option value="urgent">Urgent</option>
+                            </select>
+                            <label>Assign To *</label>
+                            <select value={newTappal.assignedTo}
+                        onChange={e=>setNewTappal(prev=>({...prev,assignedTo:e.target.value}))}>
+                        <option value="">-- Select --</option>
+                        {getAssignableUsers().map(u => (
+                            <option key={u.id} value={u.id}>{u.name} ({u.role==='director'?'Director':'Dy. Director'})</option>
+                        ))}
+                    </select>
+                    <label>Initial Note (2 min window recommended)</label>
+                    <textarea
+                        value={newTappal.note}
+                        onChange={e=>setNewTappal(prev=>({...prev,note:e.target.value}))}
+                        placeholder="Add any initial remarks..."
+                    />
+                    <label>Scan/Upload Document</label>
+                    <input
+                        type="file"
+                        accept="image/*"
+                        ref={fileInputRef}
+                        onChange={handleImageUpload}
+                        style={{marginBottom:8}}
+                    />
+                    {imagePreview && <img src={imagePreview} alt="Preview" className="image-preview" />}
+                    <div className="modal-actions">
+                        <button className="btn btn-outline" onClick={()=>{setShowCreate(false);setImagePreview(null);}}>Cancel</button>
+                        <button className="btn btn-accent" onClick={handleCreate}>✅ Create & Assign</button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+        <div className="card">
+            <div className="card-header"><h3>📋 Dispatched Tappals</h3></div>
+            <div className="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>Tappal #</th><th>Subject</th><th>Assigned To</th><th>Status</th><th>Date</th><th>Duration</th></tr>
+                    </thead>
+                    <tbody>
+                        {myTappals.length === 0 ? (
+                            <tr><td colSpan={6} style={{textAlign:'center',padding:30}}>No tappals dispatched yet.</td></tr>
+                        ) : (
+                            myTappals.sort((a,b)=>b.createdAt-a.createdAt).map(t => {
+                                const assignee = data.users.find(u => u.id === t.currentAssignedTo);
+                                return (
+                                    <tr key={t.id}>
+                                        <td><strong>#{t.tappalNumber}</strong></td>
+                                        <td>{t.subject}</td>
+                                        <td>{assignee?.name || 'Unknown'}</td>
+                                        <td><span className={`badge ${t.status==='completed'?'badge-completed':t.priority==='urgent'?'badge-urgent':'badge-pending'}`}>{t.status}{t.priority==='urgent'&&t.status==='pending'?' ⚡':''}</span></td>
+                                        <td>{new Date(t.createdAt).toLocaleDateString()}</td>
+                                        <td className={t.status==='pending'?getDurationClass(t.createdAt):''}>{t.status==='pending'?formatDuration(t.createdAt):'✅ Done'}</td>
+                                    </tr>
+                                );
+                            })
+                        )}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+);
+}
+
+// --- Director Dashboard ---
+function DirectorDashboard() {
+const { data, currentUser, assignTappal, refreshData } = useApp();
+const [activeTab, setActiveTab] = useState('all');
+const [transferModal, setTransferModal] = useState(null);
+const [transferTo, setTransferTo] = useState('');
+const [transferReason, setTransferReason] = useState('');
+const [showCreateUser, setShowCreateUser] = useState(false);
+const [newUser, setNewUser] = useState({username:'',password:'',name:'',role:'sub_user',department:'rd',subRole:'admin',parentId:''});
+const [showDetail, setShowDetail] = useState(null);
+
+const allTappals = data.tappals;
+const pendingTappals = allTappals.filter(t => t.status === 'pending');
+const completedTappals = allTappals.filter(t => t.status === 'completed');
+const urgentPending = pendingTappals.filter(t => t.priority === 'urgent');
+
+const displayedTappals = activeTab === 'all' ? allTappals :
+activeTab === 'pending' ? pendingTappals :
+activeTab === 'completed' ? completedTappals :
+activeTab === 'urgent' ? urgentPending : allTappals;
+
+const pendingRatio = allTappals.length > 0 ?
+    Math.round((pendingTappals.length / allTappals.length) * 100) : 0;
+
+const handleTransfer = () => {
+    if (!transferTo || !transferModal) return;
+    assignTappal(transferModal.id, transferTo, transferReason.trim() || 'Transferred by Director');
+    setTransferModal(null);
+    setTransferTo('');
+    setTransferReason('');
+};
+
+const getDyDirUsers = (dept) => {
+    return data.users.filter(u => u.role === 'dy_dir' && u.department === dept);
+};
+
+const getSubUsers = (dept) => {
+    return data.users.filter(u => u.role === 'sub_user' && u.department === dept);
+};
+
+const handleCreateUser = () => {
+    if (!newUser.username.trim() || !newUser.password.trim() || !newUser.name.trim()) {
+        alert('Please fill all required fields.');
+        return;
+    }
+    if (data.users.find(u => u.username === newUser.username.trim())) {
+        alert('Username already exists.');
+        return;
+    }
+    const updatedUsers = [...data.users, {
+        id: generateUserId(),
+        username: newUser.username.trim(),
+        password: newUser.password.trim(),
+        name: newUser.name.trim(),
+        role: newUser.role,
+        department: newUser.role === 'sub_user' ? newUser.department : null,
+        subRole: newUser.role === 'sub_user' ? newUser.subRole : null,
+        parentId: newUser.parentId || (newUser.role==='sub_user'&&newUser.department==='rd'?'u3':newUser.role==='sub_user'&&newUser.department==='ee'?'u4':null),
+    }];
+    const updatedData = { ...data, users: updatedUsers };
+    saveData(updatedData);
+    refreshData();
+    setShowCreateUser(false);
+    setNewUser({username:'',password:'',name:'',role:'sub_user',department:'rd',subRole:'admin',parentId:''});
+    alert('User created successfully!');
+};
+
+return (
+    <div>
+        <div className="card">
+            <div className="card-header">
+                <h3>🛡️ Director Dashboard (Admin)</h3>
+                <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+                    <button className="btn btn-sm btn-outline" onClick={()=>setShowCreateUser(true)}>➕ Create User</button>
+                    <button className="btn btn-sm btn-outline" onClick={refreshData}>🔄 Refresh</button>
+                </div>
+            </div>
+            <div className="stats-grid">
+                <div className="stat-card"><div className="stat-num">{allTappals.length}</div><div className="stat-label">Total Tappals</div></div>
+                <div className="stat-card warning"><div className="stat-num">{pendingTappals.length}</div><div className="stat-label">Pending</div></div>
+                <div className="stat-card danger"><div className="stat-num">{urgentPending.length}</div><div className="stat-label">Urgent Pending</div></div>
+                <div className="stat-card success"><div className="stat-num">{completedTappals.length}</div><div className="stat-label">Completed</div></div>
+                <div className="stat-card"><div className="stat-num">{pendingRatio}%</div><div className="stat-label">Pending Ratio</div></div>
+            </div>
+        </div>
+
+        <div className="tabs">
+            <button className={`tab ${activeTab==='all'?'active':''}`} onClick={()=>setActiveTab('all')}>📋 All ({allTappals.length})</button>
+            <button className={`tab ${activeTab==='pending'?'active':''}`} onClick={()=>setActiveTab('pending')}>⏳ Pending ({pendingTappals.length})</button>
+            <button className={`tab ${activeTab==='urgent'?'active':''}`} onClick={()=>setActiveTab('urgent')}>🚨 Urgent ({urgentPending.length})</button>
+            <button className={`tab ${activeTab==='completed'?'active':''}`} onClick={()=>setActiveTab('completed')}>✅ Completed ({completedTappals.length})</button>
+        </div>
+
+        <div className="card">
+            <div className="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Subject</th><th>Current With</th><th>Status</th><th>Pending Since</th><th>Duration</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {displayedTappals.length === 0 ? (
+                            <tr><td colSpan={7} style={{textAlign:'center',padding:30}}>No tappals to show.</td></tr>
+                        ) : (
+                            displayedTappals.sort((a,b)=>b.createdAt-a.createdAt).map(t => {
+                                const assignee = data.users.find(u => u.id === t.currentAssignedTo);
+                                const isUrgent = t.priority === 'urgent' && t.status === 'pending';
+                                return (
+                                    <tr key={t.id} className={isUrgent?'highlight-row':''}>
+                                        <td><strong>#{t.tappalNumber}</strong></td>
+                                        <td>
+                                            <span style={{cursor:'pointer',color:'var(--primary-light)',textDecoration:'underline'}}
+                                            onClick={()=>setShowDetail(t)}>{t.subject}</span>
+                                            {t.image && <span> 📎</span>}
+                                        </td>
+                                        <td>{assignee?.name || 'Unknown'} <span className="role-badge" style={{fontSize:'0.65rem',padding:'2px 6px'}}>{assignee?.role||''}</span></td>
+                                        <td><span className={`badge ${t.status==='completed'?'badge-completed':isUrgent?'badge-urgent':'badge-pending'}`}>{t.status}{isUrgent?' ⚡':''}</span></td>
+                                        <td>{formatTimeAgo(t.createdAt)}</td>
+                                        <td className={t.status==='pending'?getDurationClass(t.createdAt):''}>{t.status==='pending'?formatDuration(t.createdAt):'✅'}</td>
+                                        <td>
+                                            {t.status === 'pending' && (
+                                                <button className="btn btn-xs btn-accent"
+                                                onClick={()=>{setTransferModal(t);setTransferTo('');setTransferReason('');}}>
+                                                🔄 Transfer
+                                            </button>
+                                        )}
+                                        {t.completionNote && (
+                                            <button className="btn btn-xs btn-outline" style={{marginLeft:4}}
+                                        onClick={()=>setShowDetail(t)}>📝 Note</button>
+                                    )}
+                                </td>
+                            </tr>
+                        );
+                    })
+                )}
+            </tbody>
+        </table>
+    </div>
 </div>
 
-<!-- Login -->
-<div id="loginScreen" class="login-container">
-  <div class="login-box">
-    <h2>📋 Tappal System</h2>
-    <p>Mail & Correspondence Management</p>
-    <div class="form-group">
-      <label>Select User</label>
-      <select id="loginUser"></select>
+{/* Transfer Modal */}
+{transferModal && (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setTransferModal(null);}}>
+        <div className="modal">
+            <h3>🔄 Transfer Tappal #{transferModal.tappalNumber}</h3>
+            <p><strong>Subject:</strong> {transferModal.subject}</p>
+            <p><strong>Currently with:</strong> {data.users.find(u=>u.id===transferModal.currentAssignedTo)?.name}</p>
+            <label>Transfer To *</label>
+            <select value={transferTo} onChange={e=>setTransferTo(e.target.value)}>
+                <option value="">-- Select --</option>
+                <optgroup label="Deputy Directors">
+                    {getDyDirUsers('rd').map(u=><option key={u.id} value={u.id}>{u.name} (R&D)</option>)}
+                    {getDyDirUsers('ee').map(u=><option key={u.id} value={u.id}>{u.name} (E&E)</option>)}
+                </optgroup>
+                <optgroup label="R&D Sub-Users">
+                    {getSubUsers('rd').map(u=><option key={u.id} value={u.id}>{u.name} (R&D - {u.subRole})</option>)}
+                </optgroup>
+                <optgroup label="E&E Sub-Users">
+                    {getSubUsers('ee').map(u=><option key={u.id} value={u.id}>{u.name} (E&E - {u.subRole})</option>)}
+                </optgroup>
+                <optgroup label="Dispatch">
+                    {data.users.filter(u=>u.role==='dispatch').map(u=><option key={u.id} value={u.id}>{u.name}</option>)}
+                </optgroup>
+            </select>
+            <label>Reason for Transfer (Admin Reason)</label>
+            <textarea
+                value={transferReason}
+                onChange={e=>setTransferReason(e.target.value)}
+                placeholder="Enter reason for transfer..."
+            />
+            <div className="modal-actions">
+                <button className="btn btn-outline" onClick={()=>setTransferModal(null)}>Cancel</button>
+                <button className="btn btn-accent" onClick={handleTransfer} disabled={!transferTo}>✅ Transfer</button>
+            </div>
+        </div>
     </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="loginPass" placeholder="Enter password">
+)}
+
+{/* Detail Modal */}
+{showDetail && (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowDetail(null);}}>
+        <div className="modal">
+            <h3>📄 Tappal #{showDetail.tappalNumber}</h3>
+            <p><strong>Subject:</strong> {showDetail.subject}</p>
+            <p><strong>Description:</strong> {showDetail.description || 'N/A'}</p>
+            <p><strong>Priority:</strong> <span className={`badge ${showDetail.priority==='urgent'?'badge-urgent':showDetail.priority==='high'?'badge-pending':'badge-completed'}`}>{showDetail.priority}</span></p>
+            <p><strong>Status:</strong> {showDetail.status}</p>
+            <p><strong>Created:</strong> {new Date(showDetail.createdAt).toLocaleString()}</p>
+            {showDetail.image && <img src={showDetail.image} alt="Scanned doc" className="image-preview" style={{maxWidth:'100%',maxHeight:250}} />}
+            {showDetail.completionNote && (
+                <div className="completion-msg">
+                    <strong>✅ Completion Note:</strong> {showDetail.completionNote}
+                    <br/><small>by {data.users.find(u=>u.id===showDetail.completedBy)?.name} on {showDetail.completedAt?new Date(showDetail.completedAt).toLocaleString():'N/A'}</small>
+                </div>
+            )}
+            <div className="transfer-note">
+                <strong>📋 Assignment History:</strong>
+                {showDetail.assignmentHistory.map((h,i)=>(
+                    <div key={i} style={{marginTop:4,fontSize:'0.8rem'}}>
+                        {data.users.find(u=>u.id===h.from)?.name||'System'} → {data.users.find(u=>u.id===h.to)?.name||'Unknown'}
+                        {h.note && <span style={{color:'#856404'}}> — "{h.note}"</span>}
+                        <small style={{color:'#999'}}> ({new Date(h.timestamp).toLocaleString()})</small>
+                    </div>
+                ))}
+            </div>
+            <div className="modal-actions">
+                <button className="btn btn-outline" onClick={()=>setShowDetail(null)}>Close</button>
+            </div>
+        </div>
     </div>
-    <button class="btn btn-primary" onclick="doLogin()">Login</button>
-  </div>
+)}
+
+{/* Create User Modal */}
+{showCreateUser && (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setShowCreateUser(false);}}>
+        <div className="modal">
+            <h3>➕ Create New User</h3>
+            <label>Username *</label>
+            <input type="text" value={newUser.username} onChange={e=>setNewUser(prev=>({...prev,username:e.target.value}))} placeholder="e.g., new_user"/>
+            <label>Password *</label>
+            <input type="text" value={newUser.password} onChange={e=>setNewUser(prev=>({...prev,password:e.target.value}))} placeholder="Enter password"/>
+            <label>Full Name *</label>
+            <input type="text" value={newUser.name} onChange={e=>setNewUser(prev=>({...prev,name:e.target.value}))} placeholder="e.g., John Doe"/>
+            <label>Role</label>
+            <select value={newUser.role} onChange={e=>setNewUser(prev=>({...prev,role:e.target.value}))}>
+                <option value="sub_user">Sub User</option>
+                <option value="dy_dir">Deputy Director</option>
+                <option value="dispatch">Dispatch</option>
+            </select>
+            {newUser.role === 'sub_user' && (
+                <>
+                    <label>Department</label>
+                    <select value={newUser.department} onChange={e=>setNewUser(prev=>({...prev,department:e.target.value}))}>
+                        <option value="rd">R&D</option>
+                        <option value="ee">E&E</option>
+                    </select>
+                    <label>Sub Role</label>
+                    <select value={newUser.subRole} onChange={e=>setNewUser(prev=>({...prev,subRole:e.target.value}))}>
+                        {newUser.department==='rd'?(
+                            <>
+                                <option value="admin">Admin</option>
+                                <option value="plan">Plan</option>
+                                <option value="account">Account</option>
+                                <option value="research">Research</option>
+                                <option value="laboratory">Laboratory</option>
+                            </>
+                        ):(
+                            <>
+                                <option value="admin">Admin</option>
+                                <option value="plan">Plan</option>
+                                <option value="account">Account</option>
+                                <option value="ee">E&E</option>
+                            </>
+                        )}
+                    </select>
+                </>
+            )}
+            <div className="modal-actions">
+                <button className="btn btn-outline" onClick={()=>setShowCreateUser(false)}>Cancel</button>
+                <button className="btn btn-accent" onClick={handleCreateUser}>✅ Create User</button>
+            </div>
+        </div>
+    </div>
+)}
 </div>
+);
+}
 
-<!-- App -->
-<div id="appScreen" style="display:none;">
-  <div class="header">
-    <div style="display:flex;align-items:center;gap:12px;">
-      <button class="logout-btn" onclick="toggleSidebar()" style="display:none;" id="menuBtn">☰</button>
-      <h1>📋 <span>Tappal</span> System</h1>
+// --- Dy. Director Dashboard ---
+function DyDirDashboard() {
+const { data, currentUser, assignTappal, refreshData } = useApp();
+const dept = currentUser.department;
+const deptName = dept === 'rd' ? 'Research & Development' : 'Environment & Education';
+const [activeTab, setActiveTab] = useState('incoming');
+const [assignModal, setAssignModal] = useState(null);
+const [assignTo, setAssignTo] = useState('');
+const [assignNote, setAssignNote] = useState('');
+
+const subUsers = data.users.filter(u => u.role === 'sub_user' && u.department === dept);
+const incomingTappals = data.tappals.filter(t => t.currentAssignedTo === currentUser.id && t.status === 'pending');
+const assignedOut = data.tappals.filter(t =>
+t.assignmentHistory.some(h => h.from === currentUser.id) &&
+t.currentAssignedTo !== currentUser.id
+);
+const allDeptTappals = data.tappals.filter(t =>
+t.assignmentHistory.some(h => {
+    const fromUser = data.users.find(u => u.id === h.from);
+    const toUser = data.users.find(u => u.id === h.to);
+    return (fromUser && fromUser.department === dept) || (toUser && toUser.department === dept) ||
+        (h.from === currentUser.id) || (h.to === currentUser.id);
+}) || t.currentAssignedTo === currentUser.id
+);
+
+const displayedTappals = activeTab === 'incoming' ? incomingTappals :
+activeTab === 'assigned' ? assignedOut :
+activeTab === 'all_dept' ? allDeptTappals : incomingTappals;
+
+const handleAssign = () => {
+    if (!assignTo || !assignModal) return;
+    assignTappal(assignModal.id, assignTo, assignNote.trim() || `Assigned by ${currentUser.name}`);
+    setAssignModal(null);
+    setAssignTo('');
+    setAssignNote('');
+};
+
+return (
+    <div>
+        <div className="card">
+            <div className="card-header">
+                <h3>📂 Dy. Director ({deptName})</h3>
+                <button className="btn btn-sm btn-outline" onClick={refreshData}>🔄 Refresh</button>
+            </div>
+            <div className="stats-grid">
+                <div className="stat-card"><div className="stat-num">{incomingTappals.length}</div><div className="stat-label">Incoming</div></div>
+                <div className="stat-card warning"><div className="stat-num">{assignedOut.filter(t=>t.status==='pending').length}</div><div className="stat-label">Pending with Sub-users</div></div>
+                <div className="stat-card success"><div className="stat-num">{assignedOut.filter(t=>t.status==='completed').length}</div><div className="stat-label">Completed by Sub-users</div></div>
+                <div className="stat-card"><div className="stat-num">{subUsers.length}</div><div className="stat-label">Sub Users</div></div>
+            </div>
+        </div>
+
+        <div className="tabs">
+            <button className={`tab ${activeTab==='incoming'?'active':''}`} onClick={()=>setActiveTab('incoming')}>📥 Incoming ({incomingTappals.length})</button>
+            <button className={`tab ${activeTab==='assigned'?'active':''}`} onClick={()=>setActiveTab('assigned')}>📤 Assigned Out ({assignedOut.length})</button>
+            <button className={`tab ${activeTab==='all_dept'?'active':''}`} onClick={()=>setActiveTab('all_dept')}>📋 All Dept ({allDeptTappals.length})</button>
+        </div>
+
+        <div className="card">
+            <div className="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Subject</th><th>Current With</th><th>Status</th><th>Since</th><th>Duration</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {displayedTappals.length === 0 ? (
+                            <tr><td colSpan={7} style={{textAlign:'center',padding:30}}>No tappals to show.</td></tr>
+                        ) : (
+                            displayedTappals.sort((a,b)=>b.createdAt-a.createdAt).map(t => {
+                                const assignee = data.users.find(u => u.id === t.currentAssignedTo);
+                                return (
+                                    <tr key={t.id}>
+                                        <td><strong>#{t.tappalNumber}</strong></td>
+                                        <td>{t.subject}{t.image&&' 📎'}</td>
+                                        <td>{assignee?.name||'Unknown'}</td>
+                                        <td><span className={`badge ${t.status==='completed'?'badge-completed':t.priority==='urgent'?'badge-urgent':'badge-pending'}`}>{t.status}</span></td>
+                                        <td>{formatTimeAgo(t.createdAt)}</td>
+                                        <td className={t.status==='pending'?getDurationClass(t.createdAt):''}>{t.status==='pending'?formatDuration(t.createdAt):'✅'}</td>
+                                        <td>
+                                            {t.status==='pending' && t.currentAssignedTo===currentUser.id && (
+                                                <button className="btn btn-xs btn-accent"
+                                                onClick={()=>{setAssignModal(t);setAssignTo('');setAssignNote('');}}>
+                                                ➡️ Assign to Sub-user
+                                            </button>
+                                        )}
+                                        {t.completionNote && (
+                                            <div className="completion-msg" style={{marginTop:4}}>
+                                                ✅ {t.completionNote.substring(0,60)}...
+                                            </div>
+                                        )}
+                                    </td>
+                                </tr>
+                            );
+                        })
+                    )}
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="header-right">
-      <div class="user-badge" id="headerUser"></div>
-      <button class="logout-btn" onclick="doLogout()">Logout</button>
-    </div>
-  </div>
-  <div class="app-container">
-    <div class="sidebar" id="sidebar"></div>
-    <div class="main" id="mainContent"></div>
-  </div>
+
+    {/* Assign Modal */}
+    {assignModal && (
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setAssignModal(null);}}>
+            <div className="modal">
+                <h3>➡️ Assign Tappal #{assignModal.tappalNumber}</h3>
+                <p><strong>Subject:</strong> {assignModal.subject}</p>
+                <label>Assign to Sub-User *</label>
+                <select value={assignTo} onChange={e=>setAssignTo(e.target.value)}>
+                    <option value="">-- Select --</option>
+                    {subUsers.map(u => (
+                        <option key={u.id} value={u.id}>{u.name} ({u.subRole})</option>
+                    ))}
+                </select>
+                <label>Note</label>
+                <textarea value={assignNote} onChange={e=>setAssignNote(e.target.value)} placeholder="Add instructions..."/>
+                <div className="modal-actions">
+                    <button className="btn btn-outline" onClick={()=>setAssignModal(null)}>Cancel</button>
+                    <button className="btn btn-accent" onClick={handleAssign} disabled={!assignTo}>✅ Assign</button>
+                </div>
+            </div>
+        </div>
+    )}
 </div>
+);
+}
 
-<!-- New Tappal Modal -->
-<div class="modal-overlay" id="newTappalModal">
-  <div class="modal">
-    <h2>📨 New Tappal</h2>
-    <div class="form-group">
-      <label>Subject *</label>
-      <input type="text" id="tappalSubject" placeholder="Enter tappal subject">
+// --- Sub User Dashboard ---
+function SubUserDashboard() {
+const { data, currentUser, completeTappal, refreshData } = useApp();
+const [completeModal, setCompleteModal] = useState(null);
+const [completionMsg, setCompletionMsg] = useState('');
+
+const myTappals = data.tappals.filter(t => t.currentAssignedTo === currentUser.id);
+const pendingForMe = myTappals.filter(t => t.status === 'pending');
+const completedByMe = data.tappals.filter(t => t.completedBy === currentUser.id);
+
+const handleComplete = () => {
+    if (!completionMsg.trim() || !completeModal) {
+        alert('Please write a completion message.');
+        return;
+    }
+    completeTappal(completeModal.id, completionMsg.trim());
+    setCompleteModal(null);
+    setCompletionMsg('');
+};
+
+return (
+    <div>
+        <div className="card">
+            <div className="card-header">
+                <h3>👤 {currentUser.name} ({currentUser.subRole})</h3>
+                <span className="role-badge">{currentUser.department==='rd'?'R&D':'E&E'}</span>
+            </div>
+            <div className="stats-grid">
+                <div className="stat-card warning"><div className="stat-num">{pendingForMe.length}</div><div className="stat-label">Pending for Me</div></div>
+                <div className="stat-card success"><div className="stat-num">{completedByMe.length}</div><div className="stat-label">Completed by Me</div></div>
+                <div className="stat-card"><div className="stat-num">{myTappals.length}</div><div className="stat-label">Total Assigned</div></div>
+            </div>
+        </div>
+
+        <div className="card">
+            <div className="card-header"><h3>📥 My Tappals</h3></div>
+            <div className="table-wrapper">
+                <table>
+                    <thead>
+                        <tr><th>#</th><th>Subject</th><th>Priority</th><th>Status</th><th>Assigned</th><th>Duration</th><th>Action</th></tr>
+                    </thead>
+                    <tbody>
+                        {myTappals.length === 0 ? (
+                            <tr><td colSpan={7} style={{textAlign:'center',padding:30}}>No tappals assigned to you. 🎉</td></tr>
+                        ) : (
+                            myTappals.sort((a,b)=>b.createdAt-a.createdAt).map(t => (
+                                <tr key={t.id}>
+                                    <td><strong>#{t.tappalNumber}</strong></td>
+                                    <td>{t.subject}{t.image&&' 📎'}</td>
+                                    <td><span className={`badge ${t.priority==='urgent'?'badge-urgent':t.priority==='high'?'badge-pending':'badge-completed'}`}>{t.priority}</span></td>
+                                    <td><span className={`badge ${t.status==='completed'?'badge-completed':'badge-pending'}`}>{t.status}</span></td>
+                                    <td>{formatTimeAgo(t.createdAt)}</td>
+                                    <td className={t.status==='pending'?getDurationClass(t.createdAt):''}>{t.status==='pending'?formatDuration(t.createdAt):'✅'}</td>
+                                    <td>
+                                        {t.status==='pending' && (
+                                            <button className="btn btn-xs btn-success"
+                                            onClick={()=>{setCompleteModal(t);setCompletionMsg('');}}>
+                                            ✅ Mark Complete
+                                        </button>
+                                    )}
+                                    {t.completionNote && t.completedBy===currentUser.id && (
+                                        <div className="completion-msg" style={{marginTop:4,fontSize:'0.75rem'}}>
+                                            ✅ {t.completionNote.substring(0,50)}...
+                                        </div>
+                                    )}
+                                </td>
+                            </tr>
+                        ))
+                    )}
+                </tbody>
+            </table>
+        </div>
     </div>
-    <div class="form-group">
-      <label>From (Sender) *</label>
-      <input type="text" id="tappalFrom" placeholder="Sender name / department">
-    </div>
-    <div class="form-group">
-      <label>Description</label>
-      <textarea id="tappalDesc" placeholder="Brief description of the tappal"></textarea>
-    </div>
-    <div class="form-group">
-      <label>📎 Attach Document / Scan</label>
-      <div class="upload-area" id="uploadArea">
-        <input type="file" id="tappalFile" accept="image/*,.pdf" onchange="handleFileSelect(this)">
-        <div class="upload-icon">📷</div>
-        <div class="upload-text">Click to upload or drag & drop<br><small>Image or PDF (max 5MB)</small></div>
-        <div class="file-name" id="fileName" style="display:none;"></div>
-        <img id="filePreview" class="upload-preview" style="display:none;">
-      </div>
-      <div id="scanBtnWrap" style="margin-top:8px;">
-        <button class="btn btn-outline btn-sm" onclick="startCamera()">📸 Use Camera to Scan</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <div class="form-group">
-        <label>Priority</label>
-        <select id="tappalPriority">
-          <option value="low">Low</option>
-          <option value="medium" selected>Medium</option>
-          <option value="high">High</option>
-        </select>
-      </div>
-      <div class="form-group">
-        <label>Assign To *</label>
-        <select id="tappalAssign" onchange="onAssignChange('new')"></select>
-      </div>
-    </div>
-    <div class="form-group" id="newSubGroup" style="display:none;">
-      <label>Assign to Sub-user</label>
-      <select id="newSubUser"></select>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('newTappalModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="createTappal()">Create Tappal</button>
-    </div>
-  </div>
+
+    {/* Complete Modal */}
+    {completeModal && (
+        <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)setCompleteModal(null);}}>
+            <div className="modal">
+                <h3>✅ Complete Tappal #{completeModal.tappalNumber}</h3>
+                <p><strong>Subject:</strong> {completeModal.subject}</p>
+                <p><strong>Description:</strong> {completeModal.description||'N/A'}</p>
+                {completeModal.image && <img src={completeModal.image} alt="Doc" className="image-preview" style={{maxWidth:'100%',maxHeight:200}}/>}
+                <label>Completion Message *</label>
+                <textarea
+                    value={completionMsg}
+                    onChange={e=>setCompletionMsg(e.target.value)}
+                    placeholder="Write a brief message about the work completed..."
+                />
+                <p style={{fontSize:'0.75rem',color:'var(--text-light)'}}>This message will be visible to Director and your Dy. Director.</p>
+                <div className="modal-actions">
+                    <button className="btn btn-outline" onClick={()=>setCompleteModal(null)}>Cancel</button>
+                    <button className="btn btn-success" onClick={handleComplete} disabled={!completionMsg.trim()}>✅ Confirm Completion</button>
+                </div>
+            </div>
+        </div>
+    )}
 </div>
-
-<!-- Camera Modal -->
-<div class="modal-overlay" id="cameraModal">
-  <div class="modal">
-    <h2>📸 Scan Document</h2>
-    <div style="text-align:center;">
-      <video id="cameraVideo" autoplay playsinline style="max-width:100%;border-radius:10px;border:2px solid var(--border);"></video>
-      <canvas id="cameraCanvas" style="display:none;"></canvas>
-      <img id="capturedImage" style="display:none;max-width:100%;border-radius:10px;border:2px solid var(--success);margin-top:8px;">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeCamera()">Cancel</button>
-      <button class="btn btn-primary" id="captureBtn" onclick="capturePhoto()">📸 Capture</button>
-      <button class="btn btn-success" id="usePhotoBtn" style="display:none;" onclick="usePhoto()">✅ Use This Photo</button>
-    </div>
-  </div>
-</div>
-
-<!-- Transfer Modal -->
-<div class="modal-overlay" id="transferModal">
-  <div class="modal">
-    <h2>🔄 Transfer Tappal</h2>
-    <input type="hidden" id="transferTappalId">
-    <div class="form-group">
-      <label>Transfer To</label>
-      <select id="transferTo" onchange="onAssignChange('transfer')"></select>
-    </div>
-    <div class="form-group" id="transferSubGroup" style="display:none;">
-      <label>Sub-user</label>
-      <select id="transferSubUser"></select>
-    </div>
-    <div class="form-group">
-      <label>Reason / Note</label>
-      <textarea id="transferReason" placeholder="Reason for transfer"></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('transferModal')">Cancel</button>
-      <button class="btn btn-warning" onclick="transferTappal()">Transfer</button>
-    </div>
-  </div>
-</div>
-
-<!-- Complete Modal -->
-<div class="modal-overlay" id="completeModal">
-  <div class="modal">
-    <h2>✅ Mark as Completed</h2>
-    <input type="hidden" id="completeTappalId">
-    <div class="form-group">
-      <label>Completion Message *</label>
-      <textarea id="completeMessage" placeholder="Describe what work was done..."></textarea>
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('completeModal')">Cancel</button>
-      <button class="btn btn-success" onclick="completeTappal()">Mark Complete</button>
-    </div>
-  </div>
-</div>
-
-<!-- Add User Modal -->
-<div class="modal-overlay" id="addUserModal">
-  <div class="modal">
-    <h2>👤 Add New User</h2>
-    <div class="form-group">
-      <label>Name</label>
-      <input type="text" id="newUserName" placeholder="User name">
-    </div>
-    <div class="form-group">
-      <label>Department</label>
-      <select id="newUserDept"></select>
-    </div>
-    <div class="form-group">
-      <label>Role</label>
-      <input type="text" id="newUserRole" placeholder="e.g. Research Officer">
-    </div>
-    <div class="form-group">
-      <label>Password</label>
-      <input type="password" id="newUserPass" placeholder="Login password">
-    </div>
-    <div class="modal-actions">
-      <button class="btn btn-outline" onclick="closeModal('addUserModal')">Cancel</button>
-      <button class="btn btn-primary" onclick="addUser()">Add User</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// ============ DATA ============
-const DEFAULT_USERS = [
-  { id: 'director', name: 'Director', dept: 'Director', role: 'Director & Admin', pass: 'admin', isAdmin: true, canCreateUsers: true },
-  { id: 'dd-oe', name: 'Dy. Dir (O&E)', dept: 'Dy. Dir (O&E)', role: 'Deputy Director (Office & Estate)', pass: '1234', isAdmin: false, canCreateUsers: true },
-  { id: 'dd-ee', name: 'Dy. Dir (E&E)', dept: 'Dy. Dir (E&E)', role: 'Deputy Director (E&E)', pass: '1234', isAdmin: false, canCreateUsers: true },
-  { id: 'oe-adm', name: 'O&E Admin', dept: 'Dy. Dir (O&E)', role: 'Administration', pass: '1234', parentId: 'dd-oe' },
-  { id: 'oe-plan', name: 'O&E Planning', dept: 'Dy. Dir (O&E)', role: 'Planning', pass: '1234', parentId: 'dd-oe' },
-  { id: 'oe-acc', name: 'O&E Accounts', dept: 'Dy. Dir (O&E)', role: 'Accounts', pass: '1234', parentId: 'dd-oe' },
-  { id: 'oe-res', name: 'O&E Research', dept: 'Dy. Dir (O&E)', role: 'Research', pass: '1234', parentId: 'dd-oe' },
-  { id: 'oe-lab', name: 'O&E Lab', dept: 'Dy. Dir (O&E)', role: 'Laboratory', pass: '1234', parentId: 'dd-oe' },
-  { id: 'ee-adm', name: 'E&E Admin', dept: 'Dy. Dir (E&E)', role: 'Administration', pass: '1234', parentId: 'dd-ee' },
-  { id: 'ee-plan', name: 'E&E Planning', dept: 'Dy. Dir (E&E)', role: 'Planning', pass: '1234', parentId: 'dd-ee' },
-  { id: 'ee-acc', name: 'E&E Accounts', dept: 'Dy. Dir (E&E)', role: 'Accounts', pass: '1234', parentId: 'dd-ee' },
-  { id: 'ee-ee', name: 'E&E Section', dept: 'Dy. Dir (E&E)', role: 'E&E', pass: '1234', parentId: 'dd-ee' },
-];
-
-function loadData(key, fallback) {
-  try { const d = JSON.parse(localStorage.getItem(key)); return d && d.length ? d : fallback; }
-  catch { return fallback; }
-}
-function saveData(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
-
-let users = loadData('tappal_users', DEFAULT_USERS);
-let tappals = loadData('tappal_data', []);
-let currentUser = null;
-let currentView = 'dashboard';
-let capturedPhotoData = null;
-
-function persist() {
-  saveData('tappal_users', users);
-  saveData('tappal_data', tappals);
+);
 }
 
-// ============ AUTH ============
-function populateLogin() {
-  const sel = document.getElementById('loginUser');
-  sel.innerHTML = '<option value="">-- Select User --</option>';
-  users.forEach(u => {
-    sel.innerHTML += `<option value="${u.id}">${u.name} (${u.role})</option>`;
-  });
-}
+// --- Main App ---
+function App() {
+const [appData, setAppData] = useState(loadData);
+const [currentUser, setCurrentUser] = useState(null);
+const [screen, setScreen] = useState('login');
 
-function doLogin() {
-  const uid = document.getElementById('loginUser').value;
-  const pass = document.getElementById('loginPass').value;
-  const user = users.find(u => u.id === uid);
-  if (!user) { toast('Please select a user', true); return; }
-  if (user.pass !== pass) { toast('Wrong password', true); return; }
-  currentUser = user;
-  document.getElementById('loginScreen').style.display = 'none';
-  document.getElementById('appScreen').style.display = 'block';
-  document.getElementById('headerUser').textContent = `${user.name} · ${user.role}`;
-  buildSidebar();
-  navigate('dashboard');
-}
+const refreshData = useCallback(() => {
+    setAppData(loadData());
+}, []);
 
-function doLogout() {
-  currentUser = null;
-  document.getElementById('appScreen').style.display = 'none';
-  document.getElementById('loginScreen').style.display = '';
-  document.getElementById('loginPass').value = '';
-}
+const login = useCallback((username, password) => {
+    const user = appData.users.find(
+        u => u.username.toLowerCase() === username.toLowerCase() && u.password === password
+    );
+    if (!user) {
+        return { success: false, message: 'Invalid username or password.' };
+    }
+    setCurrentUser(user);
+    setScreen(user.role);
+    return { success: true };
+}, [appData.users]);
 
-// ============ SIDEBAR ============
-function buildSidebar() {
-  const sb = document.getElementById('sidebar');
-  const isAdmin = currentUser.isAdmin;
-  const canManage = currentUser.canCreateUsers;
-  const pending = getMyTappals().filter(t => t.status !== 'completed').length;
+const logout = useCallback(() => {
+    setCurrentUser(null);
+    setScreen('login');
+}, []);
 
-  const isDD = currentUser.dept && currentUser.dept.startsWith('Dy. Dir');
-
-  let html = `
-    <div class="sidebar-item ${currentView==='dashboard'?'active':''}" onclick="navigate('dashboard')">📊 Dashboard</div>
-    <div class="sidebar-item ${currentView==='alltappals'?'active':''}" onclick="navigate('alltappals')">📨 ${isAdmin?'All':'My'} Tappals${pending?'<span class="badge">'+pending+'</span>':''}</div>
-  `;
-  if (isAdmin || isDD) {
-    html += `<div class="sidebar-item ${currentView==='pending'?'active':''}" onclick="navigate('pending')">⏳ Pending Overview</div>`;
-  }
-  if (isAdmin) {
-    html += `<div class="sidebar-item ${currentView==='users'?'active':''}" onclick="navigate('users')">👥 User Management</div>`;
-  }
-  if (canManage && !isAdmin) {
-    html += `<div class="sidebar-item ${currentView==='dept-users'?'active':''}" onclick="navigate('dept-users')">👥 Department Users</div>`;
-  }
-  sb.innerHTML = html;
-}
-
-function toggleSidebar() { document.getElementById('sidebar').classList.toggle('mobile-show'); }
-
-// ============ HELPERS ============
-function genId() { return 'T' + Date.now().toString(36) + Math.random().toString(36).substr(2, 4); }
-
-function getMyTappals() {
-  if (currentUser.isAdmin) return [...tappals];
-  const myId = currentUser.id;
-  const myDept = currentUser.dept;
-  return tappals.filter(t =>
-    t.assignedTo === myId || t.subUser === myId || t.assignedDept === myDept
-  );
-}
-
-function timeElapsed(ts) {
-  const diff = Date.now() - ts;
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return 'Just now';
-  if (mins < 60) return mins + 'm ago';
-  const hrs = Math.floor(mins / 60);
-  if (hrs < 24) return hrs + 'h ' + (mins % 60) + 'm ago';
-  const days = Math.floor(hrs / 24);
-  return days + 'd ' + (hrs % 24) + 'h ago';
-}
-
-function timeElapsedUrgent(ts) { return Math.floor((Date.now() - ts) / 86400000) >= 3; }
-
-function toast(msg, isError) {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show' + (isError ? ' error' : '');
-  setTimeout(() => t.className = 'toast', 2500);
-}
-
-function closeModal(id) { document.getElementById(id).classList.remove('show'); }
-function openModal(id) { document.getElementById(id).classList.add('show'); }
-function getUserById(id) { return users.find(u => u.id === id); }
-function getSubUsers(parentId) { return users.filter(u => u.parentId === parentId); }
-function esc(s) { if (!s) return ''; const d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
-
-function showLightbox(src) {
-  document.getElementById('lightboxImg').src = src;
-  document.getElementById('lightbox').classList.add('show');
-}
-
-// ============ ASSIGNMENT DROPDOWN LOGIC ============
-// Centralized function to populate assign dropdown and handle sub-user visibility
-function populateAssignSelect(selId) {
-  const sel = document.getElementById(selId);
-  sel.innerHTML = '';
-
-  // Director option
-  const dir = users.find(u => u.isAdmin);
-  if (dir) {
-    sel.innerHTML += `<option value="${dir.id}">${dir.name} (Director)</option>`;
-  }
-
-  // Deputy Director options
-  const dds = users.filter(u => u.dept && u.dept.startsWith('Dy. Dir'));
-  dds.forEach(dd => {
-    sel.innerHTML += `<option value="${dd.id}">${dd.name} (${dd.dept})</option>`;
-  });
-}
-
-// Called when assign dropdown changes
-function onAssignChange(mode) {
-  let selId, groupId, subId;
-  if (mode === 'new') {
-    selId = 'tappalAssign'; groupId = 'newSubGroup'; subId = 'newSubUser';
-  } else {
-    selId = 'transferTo'; groupId = 'transferSubGroup'; subId = 'transferSubUser';
-  }
-
-  const assignTo = document.getElementById(selId).value;
-  const subs = getSubUsers(assignTo);
-  const group = document.getElementById(groupId);
-  const subSel = document.getElementById(subId);
-
-  if (subs.length > 0) {
-    group.style.display = 'block';
-    subSel.innerHTML = `<option value="">-- Select sub-user (optional) --</option>` +
-      subs.map(s => `<option value="${s.id}">${s.name} (${s.role})</option>`).join('');
-  } else {
-    group.style.display = 'none';
-    subSel.innerHTML = '';
-  }
-}
-
-// ============ FILE UPLOAD ============
-function handleFileSelect(input) {
-  const file = input.files[0];
-  if (!file) return;
-
-  if (file.size > 5 * 1024 * 1024) {
-    toast('File too large (max 5MB)', true);
-    input.value = '';
-    return;
-  }
-
-  const area = document.getElementById('uploadArea');
-  const nameEl = document.getElementById('fileName');
-  const preview = document.getElementById('filePreview');
-
-  nameEl.textContent = '📎 ' + file.name;
-  nameEl.style.display = 'block';
-  area.classList.add('has-file');
-
-  if (file.type.startsWith('image/')) {
-    const reader = new FileReader();
-    reader.onload = e => {
-      preview.src = e.target.result;
-      preview.style.display = 'block';
+const createTappal = useCallback((tappalData) => {
+    const newTappal = {
+        id: generateId(),
+        tappalNumber: appData.nextTappalNum,
+        subject: tappalData.subject,
+        description: tappalData.description,
+        priority: tappalData.priority,
+        image: tappalData.image || null,
+        createdAt: Date.now(),
+        currentAssignedTo: tappalData.assignedTo,
+        createdBy: currentUser.id,
+        assignmentHistory: [{
+            from: currentUser.id,
+            to: tappalData.assignedTo,
+            timestamp: Date.now(),
+            note: tappalData.note || 'Initial assignment',
+        }],
+        status: 'pending',
+        completionNote: null,
+        completedBy: null,
+        completedAt: null,
     };
-    reader.readAsDataURL(file);
-  } else {
-    preview.style.display = 'none';
-  }
-}
+    const updated = {
+        ...appData,
+        tappals: [...appData.tappals, newTappal],
+        nextTappalNum: appData.nextTappalNum + 1,
+    };
+    saveData(updated);
+    setAppData(updated);
+}, [appData, currentUser]);
 
-// ============ CAMERA SCAN ============
-let cameraStream = null;
-
-function startCamera() {
-  capturedPhotoData = null;
-  document.getElementById('capturedImage').style.display = 'none';
-  document.getElementById('cameraVideo').style.display = 'block';
-  document.getElementById('captureBtn').style.display = '';
-  document.getElementById('usePhotoBtn').style.display = 'none';
-  openModal('cameraModal');
-
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment', width: { ideal: 1920 }, height: { ideal: 1080 } } })
-    .then(stream => {
-      cameraStream = stream;
-      document.getElementById('cameraVideo').srcObject = stream;
-    })
-    .catch(err => {
-      toast('Camera access denied: ' + err.message, true);
-      closeModal('cameraModal');
+const assignTappal = useCallback((tappalId, newUserId, note) => {
+    const updatedTappals = appData.tappals.map(t => {
+        if (t.id === tappalId) {
+            return {
+                ...t,
+                currentAssignedTo: newUserId,
+                assignmentHistory: [
+                    ...t.assignmentHistory,
+                    {
+                        from: currentUser.id,
+                        to: newUserId,
+                        timestamp: Date.now(),
+                        note: note || 'Transferred',
+                    },
+                ],
+            };
+        }
+        return t;
     });
+    const updated = { ...appData, tappals: updatedTappals };
+    saveData(updated);
+    setAppData(updated);
+}, [appData, currentUser]);
+
+const completeTappal = useCallback((tappalId, message) => {
+    const updatedTappals = appData.tappals.map(t => {
+        if (t.id === tappalId) {
+            return {
+                ...t,
+                status: 'completed',
+                completionNote: message,
+                completedBy: currentUser.id,
+                completedAt: Date.now(),
+            };
+        }
+        return t;
+    });
+    const updated = { ...appData, tappals: updatedTappals };
+    saveData(updated);
+    setAppData(updated);
+}, [appData, currentUser]);
+
+const contextValue = {
+    data: appData,
+    currentUser,
+    login,
+    logout,
+    createTappal,
+    assignTappal,
+    completeTappal,
+    refreshData,
+};
+
+if (!currentUser) {
+    return (
+        <AppContext.Provider value={contextValue}>
+            <LoginScreen />
+        </AppContext.Provider>
+    );
 }
 
-function capturePhoto() {
-  const video = document.getElementById('cameraVideo');
-  const canvas = document.getElementById('cameraCanvas');
-  canvas.width = video.videoWidth;
-  canvas.height = video.videoHeight;
-  canvas.getContext('2d').drawImage(video, 0, 0);
-  capturedPhotoData = canvas.toDataURL('image/jpeg', 0.85);
+const roleLabels = {
+    dispatch: 'Dispatch Officer',
+    director: 'Director (Admin)',
+    dy_dir: currentUser.department === 'rd' ? 'Dy. Dir. (R&D)' : 'Dy. Dir. (E&E)',
+    sub_user: `${currentUser.name} (${currentUser.subRole}) - ${currentUser.department=== 'rd'?'R&D':'E&E'}`,
+};
 
-  document.getElementById('capturedImage').src = capturedPhotoData;
-  document.getElementById('capturedImage').style.display = 'block';
-  document.getElementById('cameraVideo').style.display = 'none';
-  document.getElementById('captureBtn').style.display = 'none';
-  document.getElementById('usePhotoBtn').style.display = '';
-
-  // Stop camera
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-}
-
-function usePhoto() {
-  // Set the file preview
-  const preview = document.getElementById('filePreview');
-  preview.src = capturedPhotoData;
-  preview.style.display = 'block';
-
-  const nameEl = document.getElementById('fileName');
-  nameEl.textContent = '📸 Scanned document';
-  nameEl.style.display = 'block';
-  document.getElementById('uploadArea').classList.add('has-file');
-
-  closeModal('cameraModal');
-}
-
-function closeCamera() {
-  if (cameraStream) { cameraStream.getTracks().forEach(t => t.stop()); cameraStream = null; }
-  closeModal('cameraModal');
-}
-
-// ============ NAVIGATE ============
-function navigate(view) {
-  currentView = view;
-  buildSidebar();
-  const main = document.getElementById('mainContent');
-  switch(view) {
-    case 'dashboard': renderDashboard(main); break;
-    case 'alltappals': renderAllTappals(main); break;
-    case 'pending': renderPendingOverview(main); break;
-    case 'users': renderUserManagement(main); break;
-    case 'dept-users': renderDeptUsers(main); break;
-    default: renderDashboard(main);
-  }
-}
-
-// ============ DASHBOARD ============
-function renderDashboard(el) {
-  const my = getMyTappals();
-  const pending = my.filter(t => t.status === 'pending').length;
-  const inprog = my.filter(t => t.status === 'in-progress').length;
-  const completed = my.filter(t => t.status === 'completed').length;
-
-  el.innerHTML = `
-    <div class="stats-grid">
-      <div class="stat-card blue"><div class="number">${my.length}</div><div class="label">Total Tappals</div></div>
-      <div class="stat-card orange"><div class="number">${pending}</div><div class="label">Pending</div></div>
-      <div class="stat-card green"><div class="number">${inprog}</div><div class="label">In Progress</div></div>
-      <div class="stat-card red"><div class="number">${completed}</div><div class="label">Completed</div></div>
-    </div>
-    <div class="card">
-      <div class="card-header">
-        <h3>📨 Recent Tappals</h3>
-        <button class="btn btn-primary" onclick="openNewTappal()">+ New Tappal</button>
-      </div>
-      ${my.length === 0 ? '<p style="color:var(--text-light);text-align:center;padding:20px;">No tappals yet. Click "+ New Tappal" to create one.</p>' : renderTappalTable(my.slice(-10).reverse())}
-    </div>
-  `;
-}
-
-// ============ TAPPAL TABLE ============
-function renderTappalTable(list) {
-  if (!list.length) return '<p style="color:var(--text-light);text-align:center;padding:16px;">No tappals found</p>';
-  return `<div class="table-wrap"><table>
-    <thead><tr>
-      <th>ID</th><th>Subject</th><th>Assigned To</th><th>Status</th><th>Priority</th><th>📎</th><th>Age</th><th>Actions</th>
-    </tr></thead>
-    <tbody>
-      ${list.map(t => {
-        const au = getUserById(t.assignedTo);
-        const su = t.subUser ? getUserById(t.subUser) : null;
-        const urgent = timeElapsedUrgent(t.createdAt) && t.status !== 'completed';
-        const hasAttach = t.attachment || t.capturedPhoto;
-        return `<tr>
-          <td><strong>${t.id}</strong></td>
-          <td>${esc(t.subject)}<br><small style="color:var(--text-light)">${esc(t.from)}</small></td>
-          <td>${au ? au.name : '—'}${su ? '<br><small>→ ' + su.name + '</small>' : ''}</td>
-          <td><span class="status status-${t.status}">${t.status.replace('-',' ')}</span></td>
-          <td><span class="priority-${t.priority}">${t.priority}</span></td>
-          <td>${hasAttach ? '📎' : '—'}</td>
-          <td><span class="time-elapsed ${urgent ? 'urgent' : ''}">${timeElapsed(t.createdAt)}</span></td>
-          <td>${renderActions(t)}</td>
-        </tr>`;
-      }).join('')}
-    </tbody>
-  </table></div>`;
-}
-
-function canTransfer() {
-  if (currentUser.isAdmin) return true;
-  if (currentUser.dept && currentUser.dept.startsWith('Dy. Dir')) return true;
-  return false;
-}
-
-function renderActions(t) {
-  let btns = [];
-  if (canTransfer() && t.status !== 'completed') {
-    btns.push(`<button class="btn btn-sm btn-warning" onclick="openTransfer('${t.id}')">Transfer</button>`);
-  }
-  const canComplete = t.assignedTo === currentUser.id || t.subUser === currentUser.id;
-  if (canComplete && t.status !== 'completed') {
-    btns.push(`<button class="btn btn-sm btn-success" onclick="openComplete('${t.id}')">Complete</button>`);
-  }
-  btns.push(`<button class="btn btn-sm btn-outline" onclick="viewTappal('${t.id}')">View</button>`);
-  return btns.join(' ');
-}
-
-// ============ ALL TAPPALS ============
-function renderAllTappals(el) {
-  const my = getMyTappals().reverse();
-  el.innerHTML = `
-    <div class="card">
-      <div class="card-header">
-        <h3>📨 ${currentUser.isAdmin ? 'All' : 'My'} Tappals</h3>
-        <button class="btn btn-primary" onclick="openNewTappal()">+ New Tappal</button>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap;" id="filterBtns">
-        <button class="btn btn-sm btn-primary" onclick="filterTappals('all')">All</button>
-        <button class="btn btn-sm btn-outline" onclick="filterTappals('pending')">Pending</button>
-        <button class="btn btn-sm btn-outline" onclick="filterTappals('in-progress')">In Progress</button>
-        <button class="btn btn-sm btn-outline" onclick="filterTappals('completed')">Completed</button>
-        <button class="btn btn-sm btn-outline" onclick="filterTappals('transferred')">Transferred</button>
-      </div>
-      <div id="tappalTableWrap">${renderTappalTable(my)}</div>
-    </div>
-  `;
-}
-
-function filterTappals(status) {
-  let my = getMyTappals().reverse();
-  if (status !== 'all') my = my.filter(t => t.status === status);
-  document.getElementById('tappalTableWrap').innerHTML = renderTappalTable(my);
-}
-
-// ============ PENDING OVERVIEW ============
-function renderPendingOverview(el) {
-  let pending;
-  let title;
-  if (currentUser.isAdmin) {
-    pending = tappals.filter(t => t.status !== 'completed');
-    title = '⏳ Pending Tappals — All Departments';
-  } else {
-    // DD sees only their department's tappals
-    pending = tappals.filter(t => t.status !== 'completed' && t.assignedDept === currentUser.dept);
-    title = '⏳ Pending Tappals — ' + currentUser.dept;
-  }
-  const grouped = {};
-  pending.forEach(t => {
-    const uid = t.subUser || t.assignedTo;
-    if (!grouped[uid]) grouped[uid] = [];
-    grouped[uid].push(t);
-  });
-
-  let html = `<div class="card"><div class="card-header"><h3>${title}</h3></div>`;
-  if (!Object.keys(grouped).length) {
-    html += '<p style="text-align:center;color:var(--text-light);padding:20px;">No pending tappals! 🎉</p>';
-  } else {
-    for (const uid in grouped) {
-      const user = getUserById(uid);
-      const tList = grouped[uid];
-      html += `
-        <div style="margin-bottom:20px;">
-          <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
-            <div class="user-avatar">${user ? user.name.charAt(0) : '?'}</div>
-            <div>
-              <div class="user-name">${user ? user.name : uid}</div>
-              <div class="user-role">${user ? user.role : ''} · ${tList.length} pending</div>
+return (
+    <AppContext.Provider value={contextValue}>
+        <div className="app-layout">
+            <div className="topbar">
+                <div>
+                    <h2>📬 Tappal Management</h2>
+                </div>
+                <div className="user-info">
+                    <span className={`role-badge ${currentUser.role==='director'?'admin-badge':''}`}>
+                        {roleLabels[currentUser.role] || currentUser.role}
+                    </span>
+                    <span style={{fontWeight:600}}>{currentUser.name}</span>
+                    <button className="btn btn-sm btn-outline" style={{color:'#fff',borderColor:'rgba(255,255,255,0.5)'}} onClick={logout}>
+                        🚪 Logout
+                    </button>
+                </div>
             </div>
-          </div>
-          ${renderTappalTable(tList)}
+            <div className="main-content">
+                {currentUser.role === 'dispatch' && <DispatchDashboard />}
+                {currentUser.role === 'director' && <DirectorDashboard />}
+                {currentUser.role === 'dy_dir' && <DyDirDashboard />}
+                {currentUser.role === 'sub_user' && <SubUserDashboard />}
+            </div>
         </div>
-      `;
-    }
-  }
-  html += '</div>';
-  el.innerHTML = html;
+    </AppContext.Provider>
+);
 }
 
-// ============ USER MANAGEMENT ============
-function renderUserManagement(el) {
-  let html = `
-    <div class="card">
-      <div class="card-header">
-        <h3>👥 User Management</h3>
-        <button class="btn btn-primary" onclick="openAddUser()">+ Add User</button>
-      </div>
-      <div class="user-list">
-        ${users.map(u => `
-          <div class="user-row">
-            <div class="user-info">
-              <div class="user-avatar">${u.name.charAt(0)}</div>
-              <div>
-                <div class="user-name">${esc(u.name)}</div>
-                <div class="user-role">${esc(u.dept)} · ${esc(u.role)}${u.isAdmin ? ' ⭐ Admin' : ''}</div>
-              </div>
-            </div>
-            <div style="display:flex;gap:6px;">
-              ${!u.isAdmin ? `<button class="btn btn-sm btn-outline" onclick="resetPassword('${u.id}')">Reset Pass</button>` : ''}
-              ${!u.isAdmin ? `<button class="btn btn-sm btn-danger" onclick="removeUser('${u.id}')">Remove</button>` : ''}
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>
-  `;
-  el.innerHTML = html;
-}
+// Render
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
 
-function renderDeptUsers(el) {
-  const subs = getSubUsers(currentUser.id);
-  let html = `
-    <div class="card">
-      <div class="card-header">
-        <h3>👥 ${currentUser.dept} - Sub-users</h3>
-        <button class="btn btn-primary" onclick="openAddUser()">+ Add User</button>
-      </div>
-      <div class="user-list">
-        ${subs.map(u => `
-          <div class="user-row">
-            <div class="user-info">
-              <div class="user-avatar">${u.name.charAt(0)}</div>
-              <div>
-                <div class="user-name">${esc(u.name)}</div>
-                <div class="user-role">${esc(u.role)}</div>
-              </div>
-            </div>
-            <button class="btn btn-sm btn-danger" onclick="removeUser('${u.id}')">Remove</button>
-          </div>
-        `).join('')}
-        ${subs.length === 0 ? '<p style="text-align:center;color:var(--text-light);padding:16px;">No sub-users yet</p>' : ''}
-      </div>
-    </div>
-  `;
-  el.innerHTML = html;
-}
-
-// ============ VIEW TAPPAL ============
-function viewTappal(id) {
-  const t = tappals.find(x => x.id === id);
-  if (!t) return;
-  const assigned = getUserById(t.assignedTo);
-  const sub = t.subUser ? getUserById(t.subUser) : null;
-  const urgent = timeElapsedUrgent(t.createdAt) && t.status !== 'completed';
-
-  let timelineHtml = (t.history || []).map(h => `
-    <div class="timeline-item">
-      <div class="timeline-dot"><svg viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg></div>
-      <div class="timeline-content">
-        <div class="tl-title">${esc(h.action)}</div>
-        <div class="tl-desc">${esc(h.detail || '')}</div>
-        <div class="tl-time">${new Date(h.ts).toLocaleString()}</div>
-      </div>
-    </div>
-  `).join('');
-
-  let completionHtml = '';
-  if (t.status === 'completed' && t.completionMessage) {
-    completionHtml = `
-      <div class="completion-box">
-        <h4>✅ Work Completed</h4>
-        <p>${esc(t.completionMessage)}</p>
-        <small style="color:#1e8449;">Completed on ${new Date(t.completedAt).toLocaleString()}</small>
-      </div>
-    `;
-  }
-
-  // Attachment display
-  let attachHtml = '';
-  if (t.capturedPhoto) {
-    attachHtml += `<div class="attachment-box"><strong>📸 Scanned Document:</strong><br><img src="${t.capturedPhoto}" onclick="showLightbox(this.src)" style="cursor:pointer;"></div>`;
-  }
-  if (t.attachment) {
-    if (t.attachment.type && t.attachment.type.startsWith('image/')) {
-      attachHtml += `<div class="attachment-box"><strong>📎 Attachment:</strong><br><img src="${t.attachment.data}" onclick="showLightbox(this.src)" style="cursor:pointer;"></div>`;
-    } else {
-      attachHtml += `<div class="attachment-box"><strong>📎 Attachment:</strong> ${esc(t.attachment.name)}</div>`;
-    }
-  }
-
-  const main = document.getElementById('mainContent');
-  main.innerHTML = `
-    <div class="card">
-      <div class="detail-header">
-        <div>
-          <h2>📨 ${esc(t.subject)}</h2>
-          <span style="color:var(--text-light)">ID: ${t.id}</span>
-        </div>
-        <span class="status status-${t.status}">${t.status.replace('-',' ')}</span>
-      </div>
-      <div class="detail-meta">
-        <div class="item"><div class="lbl">From</div><div class="val">${esc(t.from)}</div></div>
-        <div class="item"><div class="lbl">Priority</div><div class="val priority-${t.priority}">${t.priority}</div></div>
-        <div class="item"><div class="lbl">Assigned To</div><div class="val">${assigned ? assigned.name : '—'}${sub ? ' → ' + sub.name : ''}</div></div>
-        <div class="item"><div class="lbl">Age</div><div class="val ${urgent?'urgent':''}">${timeElapsed(t.createdAt)}</div></div>
-        <div class="item"><div class="lbl">Created</div><div class="val">${new Date(t.createdAt).toLocaleString()}</div></div>
-        <div class="item"><div class="lbl">Description</div><div class="val">${esc(t.description) || '—'}</div></div>
-      </div>
-      ${attachHtml}
-      ${completionHtml}
-      <div style="margin-top:16px;display:flex;gap:8px;flex-wrap:wrap;">
-        ${canTransfer() && t.status !== 'completed' ? `<button class="btn btn-warning" onclick="openTransfer('${t.id}')">🔄 Transfer</button>` : ''}
-        ${(t.assignedTo === currentUser.id || t.subUser === currentUser.id) && t.status !== 'completed' ? `<button class="btn btn-success" onclick="openComplete('${t.id}')">✅ Mark Complete</button>` : ''}
-        <button class="btn btn-outline" onclick="navigate('alltappals')">← Back</button>
-      </div>
-    </div>
-    <div class="card">
-      <h3 style="margin-bottom:12px;">📜 History</h3>
-      <div class="timeline">${timelineHtml || '<p style="color:var(--text-light)">No history yet</p>'}</div>
-    </div>
-  `;
-}
-
-// ============ CREATE TAPPAL ============
-function openNewTappal() {
-  // Reset form
-  document.getElementById('tappalSubject').value = '';
-  document.getElementById('tappalFrom').value = '';
-  document.getElementById('tappalDesc').value = '';
-  document.getElementById('tappalFile').value = '';
-  document.getElementById('fileName').style.display = 'none';
-  document.getElementById('filePreview').style.display = 'none';
-  document.getElementById('uploadArea').classList.remove('has-file');
-  capturedPhotoData = null;
-
-  // Populate assign dropdown
-  populateAssignSelect('tappalAssign');
-
-  // Trigger change to set up sub-user dropdown
-  onAssignChange('new');
-
-  openModal('newTappalModal');
-}
-
-function createTappal() {
-  const subject = document.getElementById('tappalSubject').value.trim();
-  const from = document.getElementById('tappalFrom').value.trim();
-  const desc = document.getElementById('tappalDesc').value.trim();
-  const priority = document.getElementById('tappalPriority').value;
-  const assignTo = document.getElementById('tappalAssign').value;
-  const subUser = document.getElementById('newSubUser').value || null;
-
-  if (!subject) { toast('Subject is required', true); return; }
-  if (!from) { toast('Sender is required', true); return; }
-  if (!assignTo) { toast('Please assign to someone', true); return; }
-
-  // Get file attachment
-  let attachment = null;
-  const fileInput = document.getElementById('tappalFile');
-  if (fileInput.files[0]) {
-    // We'll store it as base64 synchronously for simplicity
-    const file = fileInput.files[0];
-    // Use a sync approach - we already have the preview if image
-    const preview = document.getElementById('filePreview');
-    if (preview.src && preview.style.display !== 'none') {
-      attachment = { name: file.name, type: file.type, data: preview.src };
-    } else {
-      attachment = { name: file.name, type: file.type, data: null };
-    }
-  }
-
-  const t = {
-    id: genId(),
-    subject, from, description: desc, priority,
-    assignedTo: assignTo,
-    subUser,
-    assignedDept: getUserById(assignTo)?.dept || '',
-    status: 'pending',
-    createdAt: Date.now(),
-    createdBy: currentUser.id,
-    attachment: attachment,
-    capturedPhoto: capturedPhotoData || null,
-    completionMessage: '',
-    completedAt: null,
-    history: [{
-      action: 'Created',
-      detail: `Assigned to ${getUserById(assignTo)?.name}${subUser ? ' → ' + getUserById(subUser)?.name : ''}`,
-      ts: Date.now()
-    }]
-  };
-
-  tappals.push(t);
-  persist();
-  closeModal('newTappalModal');
-  toast('Tappal created: ' + t.id);
-  navigate(currentView);
-}
-
-// ============ TRANSFER ============
-function openTransfer(id) {
-  document.getElementById('transferTappalId').value = id;
-  document.getElementById('transferReason').value = '';
-
-  const t = tappals.find(x => x.id === id);
-  const currentHolder = t.subUser || t.assignedTo;
-  const sel = document.getElementById('transferTo');
-  sel.innerHTML = '';
-
-  if (currentUser.isAdmin) {
-    // Admin can transfer to anyone
-    const dir = users.find(u => u.isAdmin);
-    if (dir && dir.id !== currentHolder) {
-      sel.innerHTML += `<option value="${dir.id}">${dir.name} (Director)</option>`;
-    }
-    const dds = users.filter(u => u.dept && u.dept.startsWith('Dy. Dir'));
-    dds.forEach(dd => {
-      if (dd.id !== currentHolder) {
-        sel.innerHTML += `<option value="${dd.id}">${dd.name} (${dd.dept})</option>`;
-      }
-    });
-  } else if (currentUser.dept && currentUser.dept.startsWith('Dy. Dir')) {
-    // Deputy Director can only transfer to their own sub-users
-    const subs = getSubUsers(currentUser.id);
-    subs.forEach(s => {
-      if (s.id !== currentHolder) {
-        sel.innerHTML += `<option value="${s.id}">${s.name} (${s.role})</option>`;
-      }
-    });
-    // Also allow transferring back to themselves (the DD)
-    if (currentUser.id !== currentHolder) {
-      sel.innerHTML += `<option value="${currentUser.id}">${currentUser.name} (Self)</option>`;
-    }
-  }
-
-  if (!sel.innerHTML) {
-    toast('No available users to transfer to', true);
-    return;
-  }
-
-  onAssignChange('transfer');
-  openModal('transferModal');
-}
-
-function transferTappal() {
-  const id = document.getElementById('transferTappalId').value;
-  const to = document.getElementById('transferTo').value;
-  const sub = document.getElementById('transferSubUser').value || null;
-  const reason = document.getElementById('transferReason').value.trim();
-
-  if (!to) { toast('Select someone to transfer to', true); return; }
-
-  const t = tappals.find(x => x.id === id);
-  if (!t) return;
-
-  const toUser = getUserById(to);
-  const subUser = sub ? getUserById(sub) : null;
-
-  t.assignedTo = to;
-  t.subUser = sub || null;
-  t.assignedDept = toUser?.dept || '';
-  t.status = 'transferred';
-  t.history.push({
-    action: 'Transferred',
-    detail: `To ${toUser?.name}${subUser ? ' → ' + subUser.name : ''}. Reason: ${reason || '—'}`,
-    ts: Date.now()
-  });
-  persist();
-  closeModal('transferModal');
-  toast('Tappal transferred to ' + (subUser ? subUser.name : toUser?.name));
-  navigate(currentView);
-}
-
-// ============ COMPLETE ============
-function openComplete(id) {
-  document.getElementById('completeTappalId').value = id;
-  document.getElementById('completeMessage').value = '';
-  openModal('completeModal');
-}
-
-function completeTappal() {
-  const id = document.getElementById('completeTappalId').value;
-  const msg = document.getElementById('completeMessage').value.trim();
-  if (!msg) { toast('Please enter a completion message', true); return; }
-  const t = tappals.find(x => x.id === id);
-  if (!t) return;
-  t.status = 'completed';
-  t.completionMessage = msg;
-  t.completedAt = Date.now();
-  t.history.push({ action: 'Completed', detail: msg, ts: Date.now() });
-  persist();
-  closeModal('completeModal');
-  toast('Tappal marked as completed!');
-  navigate(currentView);
-}
-
-// ============ ADD USER ============
-function openAddUser() {
-  document.getElementById('newUserName').value = '';
-  document.getElementById('newUserRole').value = '';
-  document.getElementById('newUserPass').value = '';
-
-  const deptSel = document.getElementById('newUserDept');
-  if (currentUser.isAdmin) {
-    deptSel.innerHTML = `<option value="Dy. Dir (O&E)">Dy. Dir (O&E)</option><option value="Dy. Dir (E&E)">Dy. Dir (E&E)</option>`;
-  } else {
-    deptSel.innerHTML = `<option value="${currentUser.dept}">${currentUser.dept}</option>`;
-  }
-  openModal('addUserModal');
-}
-
-function addUser() {
-  const name = document.getElementById('newUserName').value.trim();
-  const dept = document.getElementById('newUserDept').value;
-  const role = document.getElementById('newUserRole').value.trim();
-  const pass = document.getElementById('newUserPass').value.trim();
-  if (!name || !role || !pass) { toast('All fields required', true); return; }
-
-  const parentId = dept === 'Dy. Dir (O&E)' ? 'dd-oe' : 'dd-ee';
-  const id = 'u-' + Date.now().toString(36);
-  users.push({ id, name, dept, role, pass, parentId });
-  persist();
-  closeModal('addUserModal');
-  toast('User added: ' + name);
-  navigate(currentView);
-}
-
-function removeUser(id) {
-  if (!confirm('Remove this user?')) return;
-  users = users.filter(u => u.id !== id);
-  persist();
-  toast('User removed');
-  navigate(currentView);
-}
-
-function resetPassword(id) {
-  const newPass = prompt('Enter new password for this user:');
-  if (!newPass) return;
-  const u = users.find(x => x.id === id);
-  if (u) { u.pass = newPass; persist(); toast('Password reset for ' + u.name); }
-}
-
-// ============ INIT ============
-populateLogin();
-
-if (window.innerWidth <= 768) {
-  document.getElementById('menuBtn').style.display = 'inline-block';
-}
-
-// Allow Enter key on login
-document.getElementById('loginPass').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+console.log('📬 Tappal Management System Ready');
+console.log('Demo Credentials:');
+console.log('  Director: director / director123');
+console.log('  Dispatch: dispatch / dispatch123');
+console.log('  Dy.Dir(R&D): dy_dir_rd / password123');
+console.log('  Dy.Dir(E&E): dy_dir_ee / password123');
+console.log('  Sub-users: rd_admin, rd_plan, rd_account, rd_research, rd_lab, ee_admin, ee_plan, ee_account, ee_ee / password123');
 </script>
 </body>
 </html>
